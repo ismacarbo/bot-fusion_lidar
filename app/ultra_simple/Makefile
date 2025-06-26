@@ -1,36 +1,39 @@
-#/*
-# * Copyright (C) 2014  RoboPeak
-# * Copyright (C) 2014 - 2018 Shanghai Slamtec Co., Ltd.
-# *
-# * This program is free software: you can redistribute it and/or modify
-# * it under the terms of the GNU General Public License as published by
-# * the Free Software Foundation, either version 3 of the License, or
-# * (at your option) any later version.
-# *
-# * This program is distributed in the hope that it will be useful,
-# * but WITHOUT ANY WARRANTY; without even the implied warranty of
-# * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# * GNU General Public License for more details.
-# *
-# * You should have received a copy of the GNU General Public License
-# * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# *
-# */
-#
-HOME_TREE := ../../
+CXX       := g++
+CXXFLAGS  := -std=c++17 \
+              $(shell sdl2-config --cflags) \
+              -I../../third_party/imgui \
+              -I../../third_party/imgui/backends \
+              -I../../third_party/implot \
+              -I../../third_party/gl3w/include \
+              -I../../sdk/include \
+              -I../../sdk/src \
+              -DIMGUI_IMPL_OPENGL_LOADER_GL3W
+LDFLAGS   := $(shell sdl2-config --libs) -lGL -ldl -lm -lpthread
 
-MODULE_NAME := $(notdir $(CURDIR))
+SOURCES := mainPlot.cpp \
+           ../../third_party/imgui/imgui.cpp \
+           ../../third_party/imgui/imgui_draw.cpp \
+           ../../third_party/imgui/imgui_tables.cpp \
+           ../../third_party/imgui/imgui_widgets.cpp \
+           ../../third_party/imgui/backends/imgui_impl_sdl2.cpp \
+           ../../third_party/imgui/backends/imgui_impl_opengl3.cpp \
+           ../../third_party/implot/implot.cpp \
+           ../../third_party/implot/implot_items.cpp \
+           ../../third_party/gl3w/src/gl3w.c
 
-include $(HOME_TREE)/mak_def.inc
+OBJECTS := $(SOURCES:.cpp=.o)
+OBJECTS := $(OBJECTS:.c=.o)
 
-CXXSRC += main.cpp
-C_INCLUDES += -I$(CURDIR)/../../sdk/include -I$(CURDIR)/../../sdk/src
+all: ultra_simple
 
-EXTRA_OBJ := 
-LD_LIBS += -lstdc++ -lpthread
+ultra_simple: $(OBJECTS)
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
-all: build_app
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-include $(HOME_TREE)/mak_common.inc
+%.o: %.c
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-clean: clean_app
+clean:
+	rm -f $(OBJECTS) ultra_simple
