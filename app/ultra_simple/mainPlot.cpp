@@ -8,6 +8,10 @@
 #include "../../third_party/imgui/backends/imgui_impl_opengl3.h"
 #include <../../third_party/gl3w/include/GL/gl3w.h>  
 
+#include "../../sdk/include/sl_lidar.h" 
+#include "../../sdk/include/sl_lidar_driver.h"
+using namespace sl;
+
 int main() {
     
     SDL_Init(SDL_INIT_VIDEO);
@@ -40,6 +44,9 @@ int main() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
+
+
+        ILidarDriver * drv = *createLidarDriver();
 
         
         ImGui::Render();
